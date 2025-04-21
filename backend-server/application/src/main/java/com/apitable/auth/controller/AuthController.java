@@ -21,11 +21,14 @@ package com.apitable.auth.controller;
 import cn.hutool.core.util.BooleanUtil;
 import com.apitable.auth.dto.UserLoginDTO;
 import com.apitable.auth.enums.LoginType;
+import com.apitable.auth.ro.LoginByTokenRo;
 import com.apitable.auth.ro.LoginRo;
 import com.apitable.auth.ro.RegisterRO;
 import com.apitable.auth.service.IAuthService;
 import com.apitable.auth.vo.LoginResultVO;
 import com.apitable.auth.vo.LogoutVO;
+import com.apitable.client.controller.ClientController;
+import com.apitable.client.model.ClientInfoVO;
 import com.apitable.core.support.ResponseData;
 import com.apitable.interfaces.auth.facade.AuthServiceFacade;
 import com.apitable.interfaces.auth.model.AuthParam;
@@ -42,6 +45,8 @@ import com.apitable.shared.config.properties.CookieProperties;
 import com.apitable.shared.context.SessionContext;
 import com.apitable.shared.util.information.ClientOriginInfo;
 import com.apitable.shared.util.information.InformationUtil;
+import com.apitable.user.mapper.UserMapper;
+import com.apitable.user.service.IUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
@@ -71,6 +76,9 @@ public class AuthController {
     private IAuthService iAuthService;
 
     @Resource
+    private UserMapper userMapper;
+
+    @Resource
     private BlackListServiceFacade blackListServiceFacade;
 
     @Resource
@@ -88,6 +96,9 @@ public class AuthController {
     @Value("${SKIP_REGISTER_VALIDATE:false}")
     private Boolean skipRegisterValidate;
 
+    @Resource
+    private ClientController clientController;
+
     /**
      * Register.
      *
@@ -99,7 +110,7 @@ public class AuthController {
     @Operation(summary = "register", description = "serving for community edition")
     public ResponseData<Void> register(@RequestBody @Valid final RegisterRO data) {
         if (BooleanUtil.isFalse(skipRegisterValidate)) {
-            return ResponseData.error("Validate failure");
+            //return ResponseData.error("Validate failure");
         }
         Long userId =
             iAuthService.register(data.getUsername(), data.getCredential(), data.getLang());
@@ -187,6 +198,24 @@ public class AuthController {
         // save session
         SessionContext.setUserId(userId);
         return ResponseData.success(resultVO);
+    }
+
+    /**
+     * loginByToken.
+     *
+     * @param data Request Parameters
+     * @return {@link ResponseData}
+     * @author Chambers
+     */
+    @PostResource(path = "/loginByToken", requiredLogin = false)
+    @Operation(summary = "loginByToken", description = "loginByToken")
+    public ClientInfoVO loginByToken(@RequestBody @Valid final LoginByTokenRo data, final HttpServletRequest request) {
+
+        Long userId = userMapper.selectIdByUuid(data.getToken());
+        if (userId != null){
+            SessionContext.setUserId(userId);
+        }
+        return clientController.getTemplateInfo(data.getSpaceId());
     }
 
     /**

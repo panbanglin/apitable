@@ -8,6 +8,16 @@ allprojects {
     group = "com.apitable"
 
     repositories {
+        // 尝试其他国内镜像源
+        maven { url 'https://maven.aliyun.com/repository/central' } // 直接使用阿里云中央仓库镜像
+        maven { url 'https://mirrors.huaweicloud.com/repository/maven/' } // 华为云镜像
+        maven { url 'https://repo.spring.io/milestone' } // Spring里程碑版本仓库
+        maven { url 'https://repo.spring.io/snapshot' } // Spring快照版本仓库
+        maven { url 'https://maven.aliyun.com/repository/spring' }
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+        
+        // 官方源作为备选
         mavenCentral()
         // for pingpp sdk
         maven { url = uri("https://jcenter.bintray.com") }

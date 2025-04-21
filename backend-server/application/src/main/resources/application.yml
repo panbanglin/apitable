@@ -203,3 +203,14 @@ system:
 databus:
   client:
     host: ${DATABUS_SERVER_BASE_URL:http://127.0.0.1:8625}
+
+logging:
+  level:
+    root: INFO
+    org.springframework.data.redis: DEBUG
+    io.lettuce.core: DEBUG
+    org.springframework.session: DEBUG
+    org.springframework.session.data.redis: DEBUG
+    io.lettuce.core.RedisClient: DEBUG
+    io.lettuce.core.protocol: DEBUG
+    io.lettuce.core.event: DEBUG

@@ -16,14 +16,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import axios from 'axios';
 import { useRouter } from 'next/router';
 import { FC, useEffect } from 'react';
 import { shallowEqual } from 'react-redux';
-import { Navigation, Selectors, StatusCode } from '@apitable/core';
+import { batchActions } from 'redux-batched-actions';
+import { Navigation, Selectors, StatusCode, StoreActions, LOGIN_SUCCESS } from '@apitable/core';
 import { NoAccess } from 'pc/components/invalid_page/no_access';
 import { Router } from 'pc/components/route_manager/router';
 import { usePageParams } from 'pc/hooks';
 import { resourceService } from 'pc/resource_service';
+import { store } from 'pc/store';
 import { useAppSelector } from 'pc/store/react-redux';
 import { getEnvVariables } from 'pc/utils/env';
 
@@ -61,19 +64,55 @@ export const PrivateRoute: FC<React.PropsWithChildren<unknown>> = ({ children })
 
   const RedirectComponent = () => {
     const { LOGIN_ON_AUTHORIZATION_REDIRECT_TO_URL } = getEnvVariables();
-    if (LOGIN_ON_AUTHORIZATION_REDIRECT_TO_URL) {
-      location.href = LOGIN_ON_AUTHORIZATION_REDIRECT_TO_URL + encodeURIComponent(location.href);
-      return null;
-    }
     const { href } = process.env.SSR ? { href: '' } : location;
-
-    if (!process.env.SSR && !router.asPath.includes('login')) {
-      Router.redirect(Navigation.LOGIN, {
-        query: {
-          reference: href,
-        },
-      });
-    }
+    
+    useEffect(() => {
+      // 检查是否有 auth_token
+      const urlParams = new URLSearchParams(window.location.search);
+      const authToken = urlParams.get('auth_token') || localStorage.getItem('standalone_auth_token');
+      
+      const tryAutoLogin = async () => {
+        if (authToken) {
+          try {
+            
+            // 请求登录接口
+            const res = await axios.post('/loginByToken', { token: authToken, spaceId: spaceId });
+            // 登录成功，获取用户信息
+            const userInfo = JSON.parse(res.data.userInfo);
+            console.log('userInfo', userInfo);
+            if (userInfo) {
+              // 更新 Redux 状态
+              store.dispatch(batchActions([
+                StoreActions.setIsLogin(true),
+                StoreActions.setUserMe(userInfo),
+                StoreActions.setLoading(false),
+                StoreActions.updateUserInfoErr(null)
+              ], LOGIN_SUCCESS));
+              
+              // 更新全局状态
+              window.__initialization_data__.userInfo = userInfo;
+              
+              return userInfo;
+            }
+          } catch (error) {
+            console.error('第三方登录验证失败', error);
+          }
+        }
+        
+        // 如果以上过程失败或没有 token，执行正常的重定向逻辑
+        if (LOGIN_ON_AUTHORIZATION_REDIRECT_TO_URL) {
+          location.href = LOGIN_ON_AUTHORIZATION_REDIRECT_TO_URL + encodeURIComponent(location.href);
+        } else if (!process.env.SSR && !router.asPath.includes('login')) {
+          Router.redirect(Navigation.LOGIN, {
+            query: {
+              reference: href,
+            },
+          });
+        }
+      };
+      
+      tryAutoLogin();
+    }, []);
 
     return null;
   };

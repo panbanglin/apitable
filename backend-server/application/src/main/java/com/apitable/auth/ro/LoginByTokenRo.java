@@ -16,33 +16,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.apitable;
+package com.apitable.auth.ro;
 
-import com.apitable.shared.config.initializers.EnterpriseEnvironmentInitializers;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import com.apitable.auth.enums.LoginType;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
+import lombok.Data;
 
 /**
  * <p>
- * boot entry.
+ * Login Request Parameters.
  * </p>
- *
- * @author Shawn Deng
  */
-@SpringBootApplication
-@ConfigurationPropertiesScan
-public class Application {
+@Data
+@Schema(description = "Authorization Request Parameters")
+public class LoginByTokenRo {
 
-    /**
-     * main class.
-     *
-     * @param args run arguments
-     */
-    public static void main(String[] args) {
-        SpringApplication application = new SpringApplication(Application.class);
-        application.addInitializers(new EnterpriseEnvironmentInitializers());
-        application.run(args);
-    }
+    @Schema(description = "The token temporarily saved by the third-party account information"
+        + " is returned when there is no binding to the account", example = "this_is_token")
+    private String token;
+
+    private String spaceId;
+
+
 }

@@ -666,13 +666,14 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, SpaceEntity>
         if (!subscriptionInfo.isFree()) {
             return;
         }
-        var fileNodeNums =
+        /*var fileNodeNums =
             subscriptionInfo.getFeature().getFileNodeNums();
         var currentSheetNums = getNodeCountBySpaceId(spaceId, NodeType::isFolder);
+
         if (!fileNodeNums.isUnlimited()
             && (currentSheetNums + addFileNums > fileNodeNums.getValue())) {
             throw new BusinessException(LimitException.FILE_NUMS_OVER_LIMIT);
-        }
+        }*/
     }
 
     @Override

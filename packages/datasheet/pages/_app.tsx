@@ -311,6 +311,18 @@ function MyAppMain({ Component, pageProps, envVars }: AppProps & { envVars: stri
     elementClosest(window);
   }, []);
 
+  // 全局处理auth_token，在每次路由变化时检查
+  useEffect(() => {
+    // 获取当前URL中的查询参数
+    const urlParams = new URLSearchParams(window.location.search);
+    const authToken = urlParams.get('auth_token');
+    
+    if (authToken) {
+      // 如果URL中存在auth_token参数，将其存储到localStorage
+      localStorage.setItem('standalone_auth_token', authToken);
+    }
+  }, [router.asPath]); // 每当路径变化时重新检查
+  
   useEffect(() => {
     (function () {
       const _Worker = window.Worker;

@@ -311,9 +311,6 @@ _run-local-backend-server:
 	source scripts/export-env.sh $$DEVENV_FILE;\
 	cd backend-server ;\
 	./gradlew build -x test ;\
-	MYSQL_HOST=127.0.0.1 \
-	REDIS_HOST=127.0.0.1 \
-	RABBITMQ_HOST=127.0.0.1 \
 	java -jar application/build/libs/application.jar
 
 _run-local-room-server:
@@ -433,6 +430,7 @@ major: # bump version number patch
 dataenv: _check_env
 	make dataenv-up
 
+#DATAENV_SERVICES := mysql minio redis rabbitmq init-db init-appdata
 DATAENV_SERVICES := mysql minio redis rabbitmq init-db init-appdata
 
 .PHONY: dataenv-up
