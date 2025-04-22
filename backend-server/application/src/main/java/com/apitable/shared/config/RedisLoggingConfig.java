@@ -55,7 +55,7 @@ public class RedisLoggingConfig {
      * 启动时打印Redis连接信息
      */
     @Bean
-    public CommandLineRunner logRedisConnectionInfo(RedisConnectionFactory connectionFactory, 
+    public CommandLineRunner logRedisConnectionInfo(RedisConnectionFactory connectionFactory,
                                                    RedisTemplate<String, Object> redisTemplate) {
         return args -> {
             log.info("========== Redis Connection Info ==========");
@@ -75,14 +75,14 @@ public class RedisLoggingConfig {
                 log.error("Redis Connection Failed. Error: {}", e.getMessage(), e);
                 log.error("Redis Connection Status: FAILED");
                 log.error("Please check your Redis configuration and ensure Redis server is running.");
-                log.error("Connection Details: redis://{}:{}@{}:{}/{}", 
+                log.error("Connection Details: redis://{}:{}@{}:{}/{}",
                          redisUsername.isEmpty() ? "" : redisUsername,
                          redisPassword.isEmpty() ? "" : "******",
-                         redisHost, 
+                         redisHost,
                          redisPort,
                          redisDb);
             }
             log.info("==========================================");
         };
     }
-} 
+}

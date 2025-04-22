@@ -21,10 +21,10 @@ import { useRouter } from 'next/router';
 import { FC, useEffect } from 'react';
 import { shallowEqual } from 'react-redux';
 import { batchActions } from 'redux-batched-actions';
-import { Navigation, Selectors, StatusCode, StoreActions, LOGIN_SUCCESS } from '@apitable/core';
+import { Navigation, Selectors, StatusCode, StoreActions } from '@apitable/core';
 import { NoAccess } from 'pc/components/invalid_page/no_access';
 import { Router } from 'pc/components/route_manager/router';
-import { usePageParams } from 'pc/hooks';
+import { LOGIN_SUCCESS, usePageParams } from 'pc/hooks';
 import { resourceService } from 'pc/resource_service';
 import { store } from 'pc/store';
 import { useAppSelector } from 'pc/store/react-redux';
@@ -69,7 +69,7 @@ export const PrivateRoute: FC<React.PropsWithChildren<unknown>> = ({ children })
     useEffect(() => {
       // 检查是否有 auth_token
       const urlParams = new URLSearchParams(window.location.search);
-      const authToken = urlParams.get('auth_token') || localStorage.getItem('standalone_auth_token');
+      const authToken = urlParams.get('auth_token') || localStorage.getItem('auth_token');
       
       const tryAutoLogin = async () => {
         if (authToken) {
@@ -91,8 +91,7 @@ export const PrivateRoute: FC<React.PropsWithChildren<unknown>> = ({ children })
               
               // 更新全局状态
               window.__initialization_data__.userInfo = userInfo;
-              
-              return userInfo;
+              // 更新页面
             }
           } catch (error) {
             console.error('第三方登录验证失败', error);

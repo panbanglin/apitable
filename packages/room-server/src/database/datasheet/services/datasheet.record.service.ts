@@ -38,10 +38,13 @@ import { DatasheetRecordRepository } from '../repositories/datasheet.record.repo
 import { RecordHistoryQueryRo } from '../ros/record.history.query.ro';
 import { DatasheetChangesetService } from './datasheet.changeset.service';
 import { RecordCommentService } from './record.comment.service';
+import { InjectLogger } from 'shared/common';
+import { Logger } from 'winston';
 
 @Injectable()
 export class DatasheetRecordService {
   constructor(
+    @InjectLogger() private readonly logger: Logger,
     private readonly recordRepo: DatasheetRecordRepository,
     private readonly datasheetMeta: DatasheetMetaRepository,
     private readonly recordArchiveRepo: DatasheetRecordArchiveRepository,
@@ -113,6 +116,7 @@ export class DatasheetRecordService {
     includeArchivedRecords = false,
     batchSize?: number,
   ): Promise<IRecordMap> {
+    this.logger.info(`getRecordsByDstIdAndRecordIds recordIds: ${JSON.stringify(recordIds)}`);
     if (recordIds && recordIds.length === 0) {
       return {};
     }
@@ -133,7 +137,7 @@ export class DatasheetRecordService {
         records = records.filter((record) => !archivedRecordIds.has(record.recordId));
       }
     }
-
+    
     return this.formatRecordMap(records, commentCountMap, recordIds);
   }
 
