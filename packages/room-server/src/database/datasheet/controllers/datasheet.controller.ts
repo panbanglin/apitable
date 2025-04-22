@@ -75,8 +75,17 @@ export class DatasheetController {
         this.logger.error(`customFilter解析错误: ${error}`);
       }
     }
-    this.logger.info(`customFilter: ${JSON.stringify(params)}`);
-    return this.datasheetService.fetchDataPack(dstId, { cookie }, true, params);
+    const result = await this.datasheetService.fetchDataPack(dstId, { cookie }, true, params);
+    this.logger.info('DataPack 最终结果:', {
+      'snapshot.meta.views 长度': JSON.stringify(result.snapshot.meta.views),
+      'snapshot.meta.fieldMap 大小': Object.keys(result.snapshot.meta.fieldMap || {}).length,
+      'snapshot.recordMap 记录数': Object.keys(result.snapshot.recordMap || {}).length,
+      'datasheet.permissions': result.datasheet.permissions,
+      'datasheet.revision': result.datasheet.revision,
+      'units 长度': result.units?.length,
+      'foreignDatasheetMap 大小': Object.keys(result.foreignDatasheetMap || {}).length
+    });
+    return result;
   }
 
   @Get('shares/:shareId/datasheets/:dstId/dataPack')

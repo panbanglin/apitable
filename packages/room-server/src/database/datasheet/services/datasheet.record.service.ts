@@ -137,7 +137,10 @@ export class DatasheetRecordService {
         records = records.filter((record) => !archivedRecordIds.has(record.recordId));
       }
     }
-    
+    // records = records.filter((record) => {
+    //   this.logger.info(`getRecordsByDstIdAndRecordIds record: ${JSON.stringify(record)}`);
+    //   return record.recordId != "reco0NMQateRF";
+    // });
     return this.formatRecordMap(records, commentCountMap, recordIds);
   }
 
