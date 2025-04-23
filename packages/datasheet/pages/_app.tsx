@@ -316,18 +316,10 @@ function MyAppMain({ Component, pageProps, envVars }: AppProps & { envVars: stri
     // 获取当前URL中的查询参数
     const urlParams = new URLSearchParams(window.location.search);
     const authToken = urlParams.get('auth_token');
+
     if (authToken) {
       // 如果URL中存在auth_token参数，将其存储到localStorage
-      localStorage.setItem('auth_token', authToken);
-    }
-    // 检查强制过滤参数
-    const filterParam = urlParams.get('customFilter');
-    if (filterParam) {
-      // 如果URL中存在filter参数，将其存储到localStorage
-      localStorage.setItem('customFilter', filterParam);
-    }
-    else{
-      localStorage.removeItem('customFilter');
+      localStorage.setItem('standalone_auth_token', authToken);
     }
   }, [router.asPath]); // 每当路径变化时重新检查
   

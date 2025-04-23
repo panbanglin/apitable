@@ -31,15 +31,6 @@ export class DatasheetPackRo {
   })
   @IsOptional()
   @Transform(value => stringToArray(value), { toClassOnly: true })
-    recordIds?: string[];
-
-  @ApiPropertyOptional({
-    type: String,
-    required: false,
-    example: '{"项目":"23"}',
-    description: '自定义过滤条件，JSON字符串格式',
-  })
-  @IsOptional()
-    customFilter?: string;
+  recordIds?: string[];
 
 }

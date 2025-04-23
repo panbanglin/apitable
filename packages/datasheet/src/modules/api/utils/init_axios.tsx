@@ -1,8 +1,8 @@
 import { Modal } from 'antd';
-import { apiErrorManager } from 'api/utils/error_manager';
 import axios from 'axios';
 import { Store } from 'redux';
 import { IReduxState, Navigation, StatusCode, StoreActions, Strings, t } from '@apitable/core';
+import { apiErrorManager } from 'api/utils/error_manager';
 import { Router } from 'pc/components/route_manager/router';
 import { store } from 'pc/store';
 import { getInitializationData, getReleaseVersion, getSpaceIdFormTemplate } from 'pc/utils/env';
@@ -189,14 +189,6 @@ export function initAxios(store: Store<IReduxState>) {
         config!.headers!.common[k] = customHeaders[k];
       }
     }
-    const customFilter = localStorage.getItem('customFilter');
-    if (customFilter) {
-      if (!config.params) {
-        config.params = {};
-      }
-      config.params.customFilter = customFilter;
-    }
-    console.log('config', config);
     return config;
   });
 

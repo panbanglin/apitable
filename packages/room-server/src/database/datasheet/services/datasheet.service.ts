@@ -122,9 +122,7 @@ export class DatasheetService {
     const { node, fieldPermissionMap } = await this.nodeService.getNodeDetailInfo(dstId, auth, origin);
     // Query snapshot
     const meta = options?.meta ?? (await this.datasheetMetaService.getMetaDataByDstId(dstId, options?.metadataException));
-    this.logger.info(`meta ${JSON.stringify(meta)}`);
     const fetchDataPackProfiler = this.logger.startTimer();
-    this.logger.info(`options ${JSON.stringify(options)}`);
     const recordMap = options?.recordIds
       ? await this.datasheetRecordService.getRecordsByDstIdAndRecordIds(
         dstId,
@@ -170,7 +168,6 @@ export class DatasheetService {
   @Span()
   fetchDataPack(dstId: string, auth: IAuthHeader, allowNative: boolean, options?: IFetchDataOptions): Promise<DatasheetPack> {
     const origin: IFetchDataOriginOptions = { internal: true, main: true };
-    this.logger.info(`fetchDataPack options: ${JSON.stringify(options)}`);
     return this.fetchCommonDataPack('datasheet', dstId, auth, origin, allowNative, { ...options, isDatasheet: true });
   }
 

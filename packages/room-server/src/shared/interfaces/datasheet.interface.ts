@@ -153,11 +153,6 @@ export interface IFetchDataOptions {
 
   /**  Default to false */
   includeArchivedRecords?: boolean;
-
-   /**
-   * 自定义过滤条件，用于过滤记录
-   */
-   customFilter?: Record<string, any>;
 }
 
 export interface IFetchDataPackOptions extends IFetchDataOptions {
@@ -168,10 +163,6 @@ export interface IFetchDataPackOptions extends IFetchDataOptions {
    * `resourceIds` will contain the datasheet ID and foreign datasheet IDs.
    */
   isDatasheet?: boolean;
-  /**
-   * 自定义过滤条件，用于过滤记录
-   */
-  customFilter?: Record<string, any>;
 }
 
 /**

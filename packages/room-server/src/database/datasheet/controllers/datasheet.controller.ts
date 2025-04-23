@@ -34,8 +34,7 @@ import { DatasheetPackRo } from '../ros/datasheet.pack.ro';
 import { DatasheetMetaService } from '../services/datasheet.meta.service';
 import { DatasheetRecordService } from '../services/datasheet.record.service';
 import { DatasheetService } from '../services/datasheet.service';
-import { Logger } from 'winston';
-import { InjectLogger } from 'shared/common';
+
 /**
  * Datasheet APIs
  */
@@ -50,7 +49,6 @@ export class DatasheetController {
     private readonly datasheetRecordService: DatasheetRecordService,
     private readonly datasheetRecordSubscriptionService: DatasheetRecordSubscriptionBaseService,
     private readonly resourceMetaService: MetaService,
-    @InjectLogger() private readonly logger: Logger,
   ) {}
 
   @Get('datasheets/:dstId/dataPack')
@@ -59,33 +57,7 @@ export class DatasheetController {
     // check if the user belongs to this space
     const { userId } = await this.userService.getMe({ cookie });
     await this.nodeService.checkUserForNode(userId, dstId);
-    this.logger.info(`customFilter: ${query.customFilter}`);
-    const params = {
-      recordIds: query.recordIds,
-      customFilter: undefined as any,
-    };
-    // 处理JSON字符串格式的customFilter
-    let customFilter = query.customFilter;
-    if (query.customFilter && typeof query.customFilter === 'string') {
-      try {
-        customFilter = JSON.parse(query.customFilter);
-        params.customFilter = customFilter;
-        this.logger.info(`解析后的customFilter: ${JSON.stringify(customFilter)}`);
-      } catch (error) {
-        this.logger.error(`customFilter解析错误: ${error}`);
-      }
-    }
-    const result = await this.datasheetService.fetchDataPack(dstId, { cookie }, true, params);
-    this.logger.info('DataPack 最终结果:', {
-      'snapshot.meta.views 长度': JSON.stringify(result.snapshot.meta.views),
-      'snapshot.meta.fieldMap 大小': Object.keys(result.snapshot.meta.fieldMap || {}).length,
-      'snapshot.recordMap 记录数': Object.keys(result.snapshot.recordMap || {}).length,
-      'datasheet.permissions': result.datasheet.permissions,
-      'datasheet.revision': result.datasheet.revision,
-      'units 长度': result.units?.length,
-      'foreignDatasheetMap 大小': Object.keys(result.foreignDatasheetMap || {}).length
-    });
-    return result;
+    return this.datasheetService.fetchDataPack(dstId, { cookie }, true, { recordIds: query.recordIds });
   }
 
   @Get('shares/:shareId/datasheets/:dstId/dataPack')
